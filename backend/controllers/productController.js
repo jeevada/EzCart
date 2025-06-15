@@ -18,12 +18,13 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
 
 // Create Product - POST : /api/v1/product/new
 exports.newProduct = async (req, res, next) => {
+    req.body.user = req.user.id; 
     const product = await Product.create(req.body);
     res.status(201).json({
         success: true,
         product   // product : product
-    })
-}
+    });
+};
 
 // Get single Product - GET : /api/v1/product/:id
 exports.getSingleProduct = async (req, res, next) => {
