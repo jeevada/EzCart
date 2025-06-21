@@ -5,9 +5,10 @@ const ErrorHandler = require('../utils/errorHandler');
 const sendToken = require('../utils/jwt'); 
 const crypto = require('crypto');
 
+// Register - /api/v1/register
 exports.registerUser = catchAsyncError(async (req, res, next) => {
     const {name, email, password, avatar} = req.body;
-    const user = await User.create({
+    const user = await User.create({ 
         name,
         email,
         password,
@@ -17,6 +18,7 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
     sendToken(user, 201, res)
 })
 
+// Login - /api/v1/login
 exports.loginUser = catchAsyncError(async (req, res, next) => {
     const {email, password} = req.body;
 
@@ -40,6 +42,7 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
     sendToken(user, 201, res);
 })
 
+// Logout - /api/v1/logout
 exports.logoutUser = (req, res, next) => {
     res.cookie('token', null, {
         expires: new Date(Date.now()),
@@ -53,6 +56,7 @@ exports.logoutUser = (req, res, next) => {
 
 }
 
+// Forgot Password - /api/v1/password/forgot
 exports.forgotPassword = catchAsyncError( async (req, res, next) => {
     const user = await User.findOne({email: req.body.email});
 
@@ -75,7 +79,7 @@ exports.forgotPassword = catchAsyncError( async (req, res, next) => {
             message
         })
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: `Email sent to ${user.email}`
         })
@@ -89,6 +93,7 @@ exports.forgotPassword = catchAsyncError( async (req, res, next) => {
 
 })
 
+// Reset Password - /api/v1/password/reset/:token
 exports.resetPassword = catchAsyncError(async (req, res, next) => {
     const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
@@ -113,4 +118,100 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
     await user.save({validateBeforeSave: false});
 
     sendToken(user, 201, res);
+})
+
+// Get User Profile - /api/v1/myprofile
+exports.getUserProfile = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.user.id);
+    res.status(200).json({
+        success: true,
+        user
+    })
+})
+
+// Change Password - /api/v1/password/change
+exports.changePassword = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.user.id).select('+password');
+
+    // check old password
+    if(!await user.isValidPassword(req.body.oldPassword)) {
+        return next(new ErrorHandler('Old password is incorrect', 401));
+    } 
+
+    // assigning new password
+    user.password = req.body.password;
+    await user.save();
+    res.status(200).json({
+        success: true
+    })
+})
+
+// Update Profile
+exports.updateProfile = catchAsyncError(async (req, res, next) => {
+    const newUserData = {
+        name: req.body.name,
+        email: req.body.email
+    }
+
+    const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+        new: true,
+        runValidators: true
+    })
+
+    res.status(200).json({
+        success: true,
+        user
+    })
+})
+
+// Admin: Get All Users - /api/v1/admin/users
+exports.getAllUsers = catchAsyncError(async (req, res, next) => {
+    const users = await User.find();
+    res.status(200).json({
+        success: true,
+        users
+    })
+})
+
+// Admin: Get Specific User - /api/v1/admin/user/:id
+exports.getUser = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+    if(!user){
+        return(next(new ErrorHandler(`User not found with this id ${req.params.id}`)))
+    }
+    res.status(200).json({
+        success: true,
+        user
+    })
+})
+
+// Admin: Update User - /api/v1/admin/user/:id
+exports.updateUser = catchAsyncError(async (req, res, next) => {
+    const newUserData = {
+        name: req.body.name,
+        email: req.body.email,
+        role: req.body.role
+    }
+
+    const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
+        new: true,
+        runValidators: true
+    })
+
+    res.status(200).json({
+        success: true,
+        user
+    })
+})
+
+// Admin: Delete User - /api/v1/admin/user/:id
+exports.deleteUser = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+    if(!user){
+        return(next(new ErrorHandler(`User not found with this id ${req.params.id}`)))
+    }
+    await user.deleteOne();
+    res.status(200).json({
+        success: true
+    })
 })
