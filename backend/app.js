@@ -16,8 +16,6 @@ app.set("query parser", function (str) {
   return qs.parse(str);
 });
 
-
-
 app.use('/api/v1', products);
 app.use('/api/v1', auth);
 // Global error handler

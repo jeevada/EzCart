@@ -50,8 +50,12 @@ userSchema.methods.getJwtToken = function (){
     })
 }
 
+// userSchema.methods.isValidPassword = async function (enteredPassword) {
+//     return bcrypt.compare(enteredPassword, this.password)
+// }
 userSchema.methods.isValidPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password)
+    if (!enteredPassword || !this.password) return false;
+    return await bcrypt.compare(enteredPassword, this.password);
 }
 
 userSchema.methods.getResetToken = function() {
