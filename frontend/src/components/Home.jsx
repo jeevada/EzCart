@@ -29,7 +29,7 @@ export  default function Home(){
     // Effect 1: Fetch data ONCE when the component mounts.
     // The empty dependency array `[]` ensures this only runs one time.
     useEffect(() => {
-        dispatch(getProducts(null, currentPage));
+        dispatch(getProducts(null, null, null, null, currentPage));
     }, [dispatch, currentPage]); // Add dispatch to satisfy the linter, it's stable and won't cause re-runs.
 
     // Effect 2: Watch for errors and show a toast.
@@ -53,7 +53,7 @@ export  default function Home(){
                     <section id="products" className="container mt-5">
                         <div className="row">
                             { products && products.map(product => (
-                                <Product key={product._id} product={product}/>
+                                <Product col={3} key={product._id} product={product}/>
                             ))}    
                         </div>
                     </section>
