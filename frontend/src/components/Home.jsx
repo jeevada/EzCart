@@ -1,15 +1,21 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import MetaData from "./layouts/MetaData";
 import { getProducts } from "../actions/productsActions";
 import { useDispatch, useSelector } from 'react-redux'
 import Loader from "./layouts/loader";
 import Product from "./product/Product";
 import { toast } from "react-toastify";
+import Pagination from 'react-js-pagination'
 
 
 export  default function Home(){
     const dispatch = useDispatch();
-    const { products, loading, error } = useSelector(state => state.productsState)
+    const { products, loading, error, productsCount, resPerPage } = useSelector(state => state.productsState)
+    const [ currentPage, setCurrentPage ] = useState(1);
+
+    const setCurrentPageNo = (pageNo) => {
+        setCurrentPage(pageNo);
+    }
 
     // The loop happens if you ever clear the error
     // useEffect(() => {
@@ -23,8 +29,8 @@ export  default function Home(){
     // Effect 1: Fetch data ONCE when the component mounts.
     // The empty dependency array `[]` ensures this only runs one time.
     useEffect(() => {
-        dispatch(getProducts());
-    }, [dispatch]); // Add dispatch to satisfy the linter, it's stable and won't cause re-runs.
+        dispatch(getProducts(currentPage));
+    }, [dispatch, currentPage]); // Add dispatch to satisfy the linter, it's stable and won't cause re-runs.
 
     // Effect 2: Watch for errors and show a toast.
     // This effect runs ONLY when the 'error' value changes.
@@ -35,7 +41,7 @@ export  default function Home(){
             });
             // Optional: You could dispatch a "clearError" action here too.
         }
-    }, [error]);
+    }, [error, currentPage]);
 
 
     return (
@@ -47,10 +53,24 @@ export  default function Home(){
                     <section id="products" className="container mt-5">
                         <div className="row">
                             { products && products.map(product => (
-                                <Product product={product}/>
+                                <Product key={product._id} product={product}/>
                             ))}    
                         </div>
                     </section>
+                    {productsCount > 0 && productsCount > resPerPage ?
+                    <div className="d-flex justify-content-center mt-5" >
+                        <Pagination 
+                            activePage={currentPage}
+                            onChange={setCurrentPageNo}
+                            totalItemsCount={productsCount}
+                            itemsCountPerPage={resPerPage}
+                            nextPageText={'Next'}
+                            firstPageText={'First'}
+                            lastPageText={'Last'}
+                            itemClass="page-item"
+                            linkClass={"page-link"} 
+                        />
+                    </div> : null }
                 </Fragment>
             }
         </Fragment>
