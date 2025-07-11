@@ -1,18 +1,20 @@
 import { Fragment, useEffect, useState } from "react";
-import MetaData from "./layouts/MetaData";
-import { getProducts } from "../actions/productsActions";
+import MetaData from ".././layouts/MetaData";
+import { getProducts } from "../../actions/productsActions";
 import { useDispatch, useSelector } from 'react-redux'
-import Loader from "./layouts/loader";
-import Product from "./product/Product";
+import Loader from ".././layouts/loader";
+import Product from ".././product/Product";
 import { toast } from "react-toastify";
 import Pagination from 'react-js-pagination'
+import { useParams } from "react-router-dom";
 
 
-export  default function Home(){
+export  default function ProductSearch(){
     const dispatch = useDispatch();
     const { products, loading, error, productsCount, resPerPage } = useSelector(state => state.productsState)
     const [ currentPage, setCurrentPage ] = useState(1);
-
+    const { keyword } = useParams();
+  
     const setCurrentPageNo = (pageNo) => {
         setCurrentPage(pageNo);
     }
@@ -29,8 +31,8 @@ export  default function Home(){
     // Effect 1: Fetch data ONCE when the component mounts.
     // The empty dependency array `[]` ensures this only runs one time.
     useEffect(() => {
-        dispatch(getProducts(null, currentPage));
-    }, [dispatch, currentPage]); // Add dispatch to satisfy the linter, it's stable and won't cause re-runs.
+        dispatch(getProducts(keyword, currentPage));
+    }, [dispatch, currentPage, keyword]); // Add dispatch to satisfy the linter, it's stable and won't cause re-runs.
 
     // Effect 2: Watch for errors and show a toast.
     // This effect runs ONLY when the 'error' value changes.
@@ -41,7 +43,7 @@ export  default function Home(){
             });
             // Optional: You could dispatch a "clearError" action here too.
         }
-    }, [error, currentPage]);
+    }, [error, currentPage, keyword]);
 
 
     return (
@@ -49,7 +51,7 @@ export  default function Home(){
             {loading? <Loader />:
                 <Fragment>
                     <MetaData title={'Buy  Best Products'} />
-                    <h1 id="products_heading">Latest Products</h1>
+                    <h1 id="products_heading">Search Products</h1>
                     <section id="products" className="container mt-5">
                         <div className="row">
                             { products && products.map(product => (
