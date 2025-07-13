@@ -1,3 +1,4 @@
+const { hostname } = require("os");
 const catchAsyncError = require("..//middlewares/catchAsyncError");
 const User = require('../models/userModel');
 const sendEmail = require("../utils/email");
@@ -7,7 +8,13 @@ const crypto = require('crypto');
 
 // Register - /api/v1/register
 exports.registerUser = catchAsyncError(async (req, res, next) => {
-    const {name, email, password, avatar} = req.body;
+    const {name, email, password} = req.body;
+
+    let avatar;
+    if(req.file){
+        avatar = `${process.env.BACKEND_URL}/uploads/user/${req.file.originalname}`;
+    }
+
     const user = await User.create({ 
         name,
         email,
@@ -68,7 +75,7 @@ exports.forgotPassword = catchAsyncError( async (req, res, next) => {
     await user.save({validateBeforeSave: false});
 
     // Create reset url
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
 
     const message = `Your password reset url is as follows \n\n ${resetUrl} \n\n If you have not requested this email, then ignore it.`;
 
@@ -148,9 +155,16 @@ exports.changePassword = catchAsyncError(async (req, res, next) => {
 
 // Update Profile
 exports.updateProfile = catchAsyncError(async (req, res, next) => {
-    const newUserData = {
+    
+    let newUserData = {
         name: req.body.name,
         email: req.body.email
+    }
+
+    let avatar;
+    if(req.file){
+        avatar = `${process.env.BACKEND_URL}/uploads/user/${req.file.originalname}`;
+        newUserData = {...newUserData, avatar}
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, newUserData, {

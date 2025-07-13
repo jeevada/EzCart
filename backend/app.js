@@ -6,8 +6,10 @@ const auth = require('./routes/auth');
 const order = require('./routes/order');
 const cookieParser = require("cookie-parser");
 const qs = require('qs');
+const path = require('path');
 
 
+app.use('/uploads', express.static(path.join(__dirname,'uploads')))
 app.use(express.json());  // accept the json data request otherwise it will refuse to accept the json data in request
 app.use(cookieParser());
 
