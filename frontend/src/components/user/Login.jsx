@@ -3,7 +3,7 @@ import MetaData from '../layouts/MetaData';
 import { login } from "../../actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { clearError } from "../../slices/authSlice";
 
 export default function Login() {
@@ -12,6 +12,9 @@ export default function Login() {
     const dispatch = useDispatch();
     const { loading, error, isAuthenticated } = useSelector(state => state.authState);
     const navigate = useNavigate();
+    
+    const location = useLocation();
+    const redirect = location.search?'/'+location.search.split('=')[1]:'/';
 
     const submitHandler = (e) => {
         e.preventDefault();
@@ -20,7 +23,7 @@ export default function Login() {
 
     useEffect(() => {
         if(isAuthenticated) {
-            navigate('/')
+            navigate(redirect) 
         }
         if(error) {
             toast.error(error, {
@@ -28,7 +31,7 @@ export default function Login() {
             });
             dispatch(clearError());  // clear the error after showing
         }
-    }, [error, isAuthenticated])
+    }, [error, isAuthenticated, navigate])
 
     return (
         <Fragment>

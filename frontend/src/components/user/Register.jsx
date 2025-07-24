@@ -20,7 +20,7 @@ export default function Register () {
 
     const onChange = (e) => {
         if(e.target.name === 'avatar'){
-            const reader = new FileReader;
+            const reader = new FileReader();
             reader.onload = () => {
                 if(reader.readyState === 2) {
                     setAvatarPreview(reader.result);
@@ -54,7 +54,7 @@ export default function Register () {
             });
             dispatch(clearError());  // clear the error after showing
         }
-    }, [error, isAuthenticated])
+    }, [error, isAuthenticated, dispatch, navigate])
 
     return (
         <div className="row wrapper">
@@ -106,7 +106,7 @@ export default function Register () {
                                     <img
                                         src={avatarPreview}
                                         className='rounded-circle'
-                                        alt='image'
+                                        alt='avatar'
                                     />
                                 </figure>
                             </div>

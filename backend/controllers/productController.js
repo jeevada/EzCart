@@ -30,6 +30,16 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
 
 // Create Product - POST : /api/v1/product/new
 exports.newProduct = async (req, res, next) => {
+    let images = [] 
+
+    if(req.files.length > 0) {
+        req.files.forEach(file => {
+            let url = `${process.env.BACKEND_URL}/uploads/product/${file.originalname}`
+            images.push({image: url})
+        })
+    }
+
+    req.body.images = images;
     req.body.user = req.user.id; 
     const product = await Product.create(req.body);
     res.status(201).json({
@@ -40,7 +50,7 @@ exports.newProduct = async (req, res, next) => {
 
 // Get single Product - GET : /api/v1/product/:id
 exports.getSingleProduct = async (req, res, next) => {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate('reviews.user', 'name email');
 
     if (!product){
         return next(new ErrorHandler("Product not found", 404))
@@ -118,7 +128,7 @@ exports.createReview = catchAsyncError(async (req, res, next) => {
         })
     }else{
         // Creating the review
-        product.reviews.push(reviews);
+        product.reviews.push(review);
         product.numberOfReviews = product.reviews.length;
     }
 
@@ -173,6 +183,16 @@ exports.deleteReview = catchAsyncError(async (req, res, next) => {
 
     res.status(200).json({
         success: true
+    })
+});
+
+// get admin products - api/v1/admin/products
+exports.getAdminProducts = catchAsyncError(async (req, res, next) => {
+    const products = await Product.find();
+    console.log(products)
+    res.status(200).send({
+        success: true,
+        products
     })
 })
 

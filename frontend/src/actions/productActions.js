@@ -1,6 +1,6 @@
 import axios from "axios";
-import { productsFail, productsRequest, productsSuccess } from "../slices/productsSlice";
-import { productFail, productRequest, productSuccess } from "../slices/productSlice";
+import { adminProductsFail, adminProductsRequest, adminProductsSuccess, productsFail, productsRequest, productsSuccess } from "../slices/productsSlice";
+import { createReviewFail, createReviewRequest, createReviewSuccess, newProductFail, newProductRequest, newProductSuccess, productFail, productRequest, productSuccess } from "../slices/productSlice";
 
 export const getProducts = (keyword, price, category, rating, currentPage) => async (dispatch) => {
     try {
@@ -44,5 +44,46 @@ export const getProduct = id => async (dispatch) => {
         const message =
             error.response?.data?.message || error.message || "Something went wrong";
         dispatch(productFail(message));
+    }
+}
+
+export const createReview = reviewData => async (dispatch) => {
+
+    try {  
+        dispatch(createReviewRequest()) 
+        const config = {
+            headers : {
+                'Content-type': 'application/json'
+            }
+        }
+        const { data }  =  await axios.put(`/api/v1/review`,reviewData, config);
+        dispatch(createReviewSuccess(data))
+    } catch (error) {
+        //handle error
+        dispatch(createReviewFail(error.response.data.message))
+    }
+    
+}
+
+export const getAdminProducts = () => async (dispatch) => {
+    try {
+        dispatch(adminProductsRequest())
+        const { data } = await axios.get('/api/v1/admin/products'); 
+        dispatch(adminProductsSuccess(data))
+    }catch (error) {
+        // handle error 
+        dispatch(adminProductsFail(error.response.data.message));
+    }
+}
+
+export const createNewProduct = productData => async (dispatch) => {
+    try {
+        dispatch(newProductRequest());
+
+        const { data } = await axios.post('/api/v1/admin/product/new', productData);  
+        dispatch(newProductSuccess(data))
+    }catch (error) {
+        // handle error 
+        dispatch(newProductFail(error.response.data.message));
     }
 }
