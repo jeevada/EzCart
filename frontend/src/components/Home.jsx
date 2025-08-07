@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 import MetaData from "./layouts/MetaData";
 import { getProducts } from "../actions/productActions";
 import { useDispatch, useSelector } from 'react-redux'
-import Loader from "./layouts/loader";
+import Loader from "./layouts/Loader";
 import Product from "./product/Product";
 import { toast } from "react-toastify";
 import Pagination from 'react-js-pagination'

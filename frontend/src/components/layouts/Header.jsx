@@ -22,7 +22,7 @@ export default function Header () {
       <div className="col-12 col-md-3">
         <div className="navbar-brand">
           <Link to="/">
-            <img width="150px" alt="EzCart Logo" src="/images/logo.png" />
+            <img width="150px" height="75"  alt="EzCart Logo" src="/images/logo.png" />
           </Link>
         </div>
       </div>

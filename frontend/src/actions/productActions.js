@@ -7,12 +7,18 @@ import {
     deleteProductFail, 
     deleteProductRequest, 
     deleteProductSuccess, 
+    deleteReviewFail, 
+    deleteReviewRequest, 
+    deleteReviewSuccess, 
     newProductFail, 
     newProductRequest, 
     newProductSuccess, 
     productFail, 
     productRequest, 
     productSuccess, 
+    reviewsFail, 
+    reviewsRequest, 
+    reviewsSuccess, 
     updateProductFail, 
     updateProductRequest,
     updateProductSuccess
@@ -125,5 +131,25 @@ export const updateProduct = (id, productData) => async (dispatch) => {
     }catch (error) {
         // handle error 
         dispatch(updateProductFail(error.response.data.message));
+    }
+}
+
+export const getReviews = id => async (dispatch) => {
+    try {
+        dispatch(reviewsRequest())
+        const { data } = await axios.get(`/api/v1/admin/reviews`, {params: {id}});  
+        dispatch(reviewsSuccess(data))
+    }catch (error) {
+        dispatch(reviewsFail(error.response.data.message));
+    }
+}
+
+export const deleteReview = (productId, id) => async (dispatch) => {
+    try {
+        dispatch(deleteReviewRequest())
+        await axios.delete(`/api/v1/admin/review`, {params: {productId, id}});  
+        dispatch(deleteReviewSuccess())
+    }catch (error) {
+        dispatch(deleteReviewFail(error.response.data.message));
     }
 }
