@@ -12,8 +12,6 @@ dotenv.config({path:path.join(__dirname, "config/config.env")});
 
 const payment = require('./routes/payment');
 
-
-
 app.use('/uploads', express.static(path.join(__dirname,'uploads')))
 app.use(express.json());  // accept the json data request otherwise it will refuse to accept the json data in request
 app.use(cookieParser());
@@ -27,7 +25,15 @@ app.set("query parser", function (str) {
 app.use('/api/v1', products);
 app.use('/api/v1', auth);
 app.use('/api/v1', order);
-app.use('/api/v1', payment)
+app.use('/api/v1', payment);
+
+
+if(process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+  app.get('/', (req, res) => {
+    res.sendFile(path.resolve(path.join(__dirname, '../frontend/dist/index.html')));
+  })
+}
 
 // Global error handler
 app.use(errorMiddleware);
