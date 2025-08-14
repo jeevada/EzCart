@@ -27,13 +27,15 @@ export default function Profile () {
                  <h4>Joined</h4>
                  <p>{String(user.createdAt).substring(0, 10)}</p>
 
-                 <Link to="/orders" className="btn btn-danger btn-block mt-5">
-                    My Orders
-                </Link>
+                <div className="profile-buttons">
+                    <Link to="/orders" className="btn btn-danger">
+                        My Orders
+                    </Link>
 
-                <Link to="/myprofile/update/password" className="btn btn-primary btn-block mt-3">
-                    Change Password
-                </Link>
+                    <Link to="/myprofile/update/password" className="btn btn-primary">
+                        Change Password
+                    </Link>
+                </div>
             </div>
         </div>
     )

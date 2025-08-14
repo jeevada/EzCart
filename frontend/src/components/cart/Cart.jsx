@@ -4,6 +4,11 @@ import { decreaseCartItemQty, increaseCartItemQty,removeItemFromCart } from '../
 import { useDispatch, useSelector } from "react-redux";
 
 
+// 1. Import the FontAwesomeIcon component and the specific icon
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+
+
 export default function Cart () {
     const { items } = useSelector(state => state.cartState);
     const dispatch = useDispatch();
@@ -63,7 +68,13 @@ export default function Cart () {
                                             </div>
 
                                             <div className="col-4 col-lg-1 mt-4 mt-lg-0">
-                                                <i id="delete_cart_item" className="fa fa-trash btn btn-danger" onClick={() => dispatch(removeItemFromCart(item.product))}></i>
+                                                {/* <i id="delete_cart_item" className="fa fa-trash btn btn-danger" onClick={() => dispatch(removeItemFromCart(item.product))}></i> */}
+                                                <button 
+                                                    className="btn btn-danger" 
+                                                    onClick={() => dispatch(removeItemFromCart(item.product))}
+                                                >
+                                                    <FontAwesomeIcon icon={faTrash} />
+                                                </button>
                                             </div>
 
                                         </div>

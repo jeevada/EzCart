@@ -89,7 +89,7 @@ function App() {
               <Route path="/order/success" element={<ProtectedRoute><OrderSuccess/></ProtectedRoute>} />
             </Routes>
           </div>
-          
+
           <Routes>
               {/* Admin Routes */}
               <Route path='/admin/dashboard' element={<ProtectedRoute isAdmin={true}><Dashboard /></ProtectedRoute>} />

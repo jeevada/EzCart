@@ -62,18 +62,24 @@ export default function Login() {
                             />
                         </div>
 
-                        <Link to="/password/forgot" className="float-right mb-4">Forgot Password?</Link>
+                        <div className="login-container">
+                            <Link to="/password/forgot" className="forgot-link">
+                                Forgot Password?
+                            </Link>
             
-                        <button
-                            id="login_button"
-                            type="submit"
-                            className="btn btn-block py-3"
-                            disabled={loading}
-                        >
-                            LOGIN
-                        </button>
+                            <button
+                                id="login_button"
+                                type="submit"
+                                className="login-pill-btn"
+                                disabled={loading}
+                            >
+                                LOGIN
+                            </button>
 
-                        <Link to='/register' className="float-right mt-3">New User?</Link>
+                            <p className="register-text">
+                                Not a Member ? <Link to="/register" className="signup-link">Signup</Link>
+                            </p>
+                        </div>
                     </form>
                 </div>
             </div>
